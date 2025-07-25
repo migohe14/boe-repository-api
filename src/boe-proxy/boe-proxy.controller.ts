@@ -4,7 +4,9 @@ import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Proxy BOE')
 @Controller('legislacion-consolidada')
 export class BoeProxyController {
   private readonly boeApiBaseUrl: string;
@@ -25,17 +27,41 @@ export class BoeProxyController {
    * Proxy para la lista de normas: /legislacion-consolidada
    */
   @Get()
+  @ApiOperation({
+    summary: 'Proxy para la lista de normas de legislación consolidada del BOE',
+    description:
+      'Reenvía una solicitud a la API del BOE para obtener **todas** las leyes consolidadas. Utiliza el parámetro `limit=-1` que la API del BOE soporta para este fin.'
+  })
+
+  @ApiResponse({
+    status: 200,
+    description:
+      'Respuesta exitosa desde la API del BOE. El contenido y el `Content-Type` son reenviados directamente. Se especifican los `content-types` soportados para que Swagger envíe una cabecera `Accept` válida.',
+    content: {
+      'application/json': {},
+      'application/xml': {},
+      'text/html': {},
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Recurso no encontrado en la API del BOE.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Error interno en el servidor proxy.',
+  })
   async proxyList(@Query() query: any, @Req() req: Request, @Res() res: Response) {
     const boeUrl = `${this.boeApiBaseUrl}/legislacion-consolidada`; // URL base sin parámetros
 
-    // Forzamos que el límite sea -1 para obtener todos los resultados,
-    // sobreescribiendo cualquier 'limit' que venga del cliente.
-    const paramsWithFullLimit = {
-      ...query,
+    // Creamos el objeto de parámetros únicamente con `limit: -1`.
+    // Se elimina `...query` para evitar enviar parámetros conflictivos (como `formato`)
+    // que causaban el error 400 al probar desde Swagger.
+    const params = {
       limit: -1,
     };
 
-    await this.proxyRequest(boeUrl, req, res, paramsWithFullLimit);
+    await this.proxyRequest(boeUrl, req, res, params);
   }
 
   private async proxyRequest(url: string, req: Request, res: Response, params?: any) {

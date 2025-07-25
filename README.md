@@ -1,7 +1,5 @@
 # Proxy API para el Boletín Oficial del Estado (BOE)
 
-![NestJS Logo](https://nestjs.com/img/logo-small.svg)
-
 Este proyecto es un proxy desarrollado con **NestJS** que expone una interfaz moderna y robusta para interactuar con la [API de Legislación Consolidada del Boletín Oficial del Estado (BOE)](https://www.boe.es/datosabiertos/).
 
 El objetivo principal es actuar como intermediario, facilitando el consumo de los datos oficiales y permitiendo añadir capas adicionales de lógica, caché o monitorización de forma sencilla.

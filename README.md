@@ -1,98 +1,99 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Proxy API para el Boletín Oficial del Estado (BOE)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este proyecto es un proxy desarrollado con **NestJS** que expone una interfaz moderna y robusta para interactuar con la [API de Legislación Consolidada del Boletín Oficial del Estado (BOE)](https://www.boe.es/datosabiertos/).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+El objetivo principal es actuar como intermediario, facilitando el consumo de los datos oficiales y permitiendo añadir capas adicionales de lógica, caché o monitorización de forma sencilla.
 
-## Description
+## 🚀 Tecnologías Utilizadas
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Framework**: [NestJS](https://nestjs.com/)
+- **Lenguaje**: [TypeScript](https://www.typescriptlang.org/)
+- **Gestor de Paquetes**: [NPM](https://www.npmjs.com/) / [Yarn](https://yarnpkg.com/)
 
-## Project setup
+---
+
+## 🏁 Primeros Pasos
+
+Sigue estos pasos para tener una copia del proyecto funcionando en tu máquina local.
+
+### Prerrequisitos
+
+Asegúrate de tener [Node.js](https://nodejs.org/) (versión >= 16) instalado.
+
+### Instalación
+
+1.  Clona el repositorio:
+    ```bash
+    git clone https://github.com/tu-usuario/boe-repository-api.git
+    ```
+2.  Navega al directorio del proyecto:
+    ```bash
+    cd boe-repository-api
+    ```
+3.  Instala las dependencias:
+    ```bash
+    npm install
+    ```
+
+### Configuración del Entorno
+
+Este proxy se conecta a la API oficial del BOE. Es una buena práctica gestionar la URL base a través de variables de entorno.
+
+1.  Crea un archivo `.env` en la raíz del proyecto.
+2.  Añade la siguiente variable:
+
+    ```env
+    BOE_API_BASE_URL=https://boe.es/datosabiertos/api
+    ```
+
+### Ejecución de la Aplicación
 
 ```bash
-$ npm install
-```
-
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
+# Modo desarrollo con auto-recarga
 $ npm run start:dev
 
-# production mode
+# Modo producción
 $ npm run start:prod
 ```
 
-## Run tests
+La aplicación estará disponible en `http://localhost:3000` por defecto.
 
-```bash
-# unit tests
-$ npm run test
+---
 
-# e2e tests
-$ npm run test:e2e
+## 📖 Endpoints de la API
 
-# test coverage
-$ npm run test:cov
-```
+Este proxy replica la estructura de la API oficial del BOE para mantener la consistencia.
 
-## Deployment
+### 1. Lista de Normas
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Obtiene una lista de las normas consolidadas. Soporta los mismos parámetros que la API oficial (`from`, `to`, `query`, `offset`, `limit`).
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+-   **Endpoint**: `GET /legislacion-consolidada`
+-   **Proxy de**: `GET https://boe.es/datosabiertos/api/legislacion-consolidada`
+-   **Ejemplo**: `http://localhost:3000/legislacion-consolidada?limit=10&offset=5`
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+### 2. Obtención de una Norma Concreta
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Recupera la información completa o parcial de una norma específica a través de su identificador.
 
-## Resources
+#### Norma Completa
+-   **Endpoint**: `GET /legislacion-consolidada/:id`
+-   **Proxy de**: `GET https://boe.es/datosabiertos/api/legislacion-consolidada/id/{id}`
+-   **Ejemplo**: `http://localhost:3000/legislacion-consolidada/BOE-A-2015-10566`
 
-Check out a few resources that may come in handy when working with NestJS:
+#### Partes de la Norma
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+También puedes solicitar fragmentos específicos de la norma:
 
-## Support
+-   **Metadatos**: `GET /legislacion-consolidada/:id/metadatos`
+-   **Análisis**: `GET /legislacion-consolidada/:id/analisis`
+-   **Metadatos ELI**: `GET /legislacion-consolidada/:id/metadata-eli`
+-   **Texto Completo**: `GET /legislacion-consolidada/:id/texto`
+-   **Índice del Texto**: `GET /legislacion-consolidada/:id/texto/indice`
+-   **Bloque de Texto**: `GET /legislacion-consolidada/:id/texto/bloque/:id_bloque`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+---
 
-## Stay in touch
+## 📄 Licencia
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.

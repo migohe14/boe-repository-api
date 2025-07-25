@@ -30,9 +30,16 @@ export class BoeProxyController {
   @ApiOperation({
     summary: 'Proxy para la lista de normas de legislación consolidada del BOE',
     description:
-      'Reenvía una solicitud a la API del BOE para obtener **todas** las leyes consolidadas. Utiliza el parámetro `limit=-1` que la API del BOE soporta para este fin.'
+      'Reenvía una solicitud a la API del BOE para obtener una lista de leyes consolidadas. Por defecto, devuelve los primeros 25 resultados. Use el parámetro `limit` para cambiar esta cantidad o `limit=-1` para obtener todos los resultados (puede ser muy lento, usar Postamn).',
   })
-
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description:
+      'Número de resultados a devolver. Por defecto es 25.',
+    type: Number,
+    example: 25,
+  })
   @ApiResponse({
     status: 200,
     description:
@@ -51,14 +58,16 @@ export class BoeProxyController {
     status: 500,
     description: 'Error interno en el servidor proxy.',
   })
-  async proxyList(@Query() query: any, @Req() req: Request, @Res() res: Response) {
+  async proxyList(
+    @Query('limit') limit: number | undefined,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     const boeUrl = `${this.boeApiBaseUrl}/legislacion-consolidada`; // URL base sin parámetros
 
-    // Creamos el objeto de parámetros únicamente con `limit: -1`.
-    // Se elimina `...query` para evitar enviar parámetros conflictivos (como `formato`)
-    // que causaban el error 400 al probar desde Swagger.
     const params = {
-      limit: -1,
+      // Si no se provee un límite, se usa 25 por defecto para que la UI de Swagger sea rápida.
+      limit: limit === undefined ? 25 : limit,
     };
 
     await this.proxyRequest(boeUrl, req, res, params);
